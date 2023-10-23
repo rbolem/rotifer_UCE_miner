@@ -1,0 +1,564 @@
+Identifying UCE Loci and Designing Baits To Target Them
+
+Create a Directory
+
+Create a dir for genomes:- mkdir genomes
+                           cd genomes
+Download the genomes: we used the genomes we have in our rotifer genome database
+
+Cleanup the genomes
+using a simple python script:
+>from Bio import SeqIO
+ with open("GCA_900240375.1_nAr1.8.reference_genomic_genomic.fna", "rU") as infile:
+    with open("arga.fasta", "w") as outf:
+        for seq in SeqIO.parse(infile, 'fasta'):
+            seq.name = ""
+            seq.description = ""
+            outf.write(seq.format('fasta'))
+
+
+Remove the downloaded original files:- 
+>rm*.fna
+
+Keeping Genomes in their own directories:
+> cd genomes
+> for critter in *; do mkdir ${critter%.*}; mv $critter ${critter%.*}; done 
+
+#convert genomes to 2bit
+>for critter in *; do /usr/local/anaconda3/bin/faToTwoBit $critter/$critter.fasta $critter/${critter%.*}.2bit;
+done
+
+#Simulate reads from genomes: using art
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/afissa/afissa.fasta \
+ --out afissa-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/arga/arga.fasta \
+ --out arga-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/asp/asp.fasta \
+ --out asp-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/avgs/avgs.fasta \
+ --out avgs-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/bcihs/bcihs.fasta \
+ --out bcihs-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/bcin/bcin.fasta \
+ --out bcin-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/bkij/bkij.fasta \
+ --out bkij-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/ebra/ebra.fasta \
+ --out ebra-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/echi/echi.fasta \
+ --out echi-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/euki/euki.fasta \
+ --out euki-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/hex/hex.fasta \
+ --out hex-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/laflo/laflo.fasta \
+ --out laflo-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/notorw/notorw.fasta \
+ --out notorw-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/polyart/polyart.fasta \
+ --out polyart-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/ppat/ppat.fasta \
+ --out ppat-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/rmcga/rmcga.fasta \
+ --out rmcga-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/rmga/rmga.fasta \
+ --out rmga-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+>/usr/local/art_linux/art_illumina \
+ --paired \
+ --in ../assemblied_genomes/ssocau/ssocau.fasta \
+ --out ssocau-pe100-reads \
+ --len 100 --fcov 2 --mflen 200 --sdev 150 -ir 0.0 -ir2 0.0 -dr 0.0 -dr2 0.0 -qs 100 -qs2 100 -na
+
+
+>for critter in afissa arga asp avgs bcihs bcin bkij ebra echi euki hex laflo notorw polyart ppat rmcga rmga ssocau;
+     do
+        echo "working on $critter";
+        touch $critter-pe100-reads.fq;
+        cat $critter-pe100-reads1.fq > $critter-pe100-reads.fq;
+        cat $critter-pe100-reads2.fq >> $critter-pe100-reads.fq;
+        rm $critter-pe100-reads1.fq;
+        rm $critter-pe100-reads2.fq;
+        gzip $critter-pe100-reads.fq;
+     done;
+
+#Read alignment to the base genome
+#Prepare the base genome: we are considering ppat as base genome:
+>cd rotifer_uce
+>mkdir base
+>cd base
+(copy the base genome to this directory)
+
+#Now, we need to run the commands to prepare the ppat genome for use with stampy:
+>cd base
+/usr/local/stampy-1.0.32/stampy.py --species="ppat" --assembly="ppat" -G ppat ppat.fasta
+/usr/local/stampy-1.0.32/stampy.py -g ppat -H ppat
+
+#Align reads to the base genome
+>mkdir alignments
+
+Now, we need to perform the alignments on a taxon-by-taxon basis (and/or you can run these in
+parallel using HPC). To do this easily (and on a local computer) we can use a BASH script to run
+the alignments serially
+>export cores=24
+export base=ppat
+export base_dir=/scratch1/rotifer_uce/alignments
+for critter in afissa arga asp avgs bcihs bcin bkij ebra echi euki hex laflo notorw polyart ppat rmcga rmga ssocau;
+    do
+       export reads=$critter-pe100-reads.fq.gz;
+       mkdir -p $base_dir/$critter;
+       cd $base_dir/$critter;
+       /usr/local/stampy-1.0.32/stampy.py --maxbasequal 93 -g ../../base/$base -h ../../base/$base \
+       --substitutionrate=0.05 -t$cores --insertsize=400 -M \
+       ../../reads/$reads | samtools view -Sb - > $critter-to-$base.bam;
+    done;
+
+This code basically loops over each exemplar genomes, aligns the reads to the base genome sequence, and converts the resul ng output to BAM format. Now, these BAM files are pretty large because they contain all mapped as well as all unmapped reads. We want to remove those unmapped reads, which will also reduce file-size.The script, as-written, removes the BAM files containing both mapped and unmapped reads.
+>mkdir all
+for critter in afissa arga asp avgs bcihs bcin bkij ebra echi euki hex laflo notorw polyart ppat rmcga rmga ssocau;
+do
+ /usr/local/samtools-1.14/samtools view -h -F 4 -b $critter/$critter-to-ppat.bam > $critter/$critter-to-ppat-MAPPING.bam;
+ rm $critter/$critter-to-ppat.bam;
+ ln -s ../$critter/$critter-to-ppat-MAPPING.bam all/$critter-to-ppat-MAPPING.bam;
+done;
+
+#Conserved locus identification
+Convert BAMS to BEDS
+>cd rotifer_uce
+
+# make a directory to hold the BED data
+> mkdir bed
+> cd bed
+
+# now, convert our *-MAPPING.bam files to BED format
+> for i in ../alignments/all/*.bam; do
+    echo $i;
+    /usr/local/bedtools2/bin/bedtools bamtobed -i $i -bed12 > `basename $i`.bed;
+done
+
+Sort the converted BEDs sorting the resulting BED files, which orders each lines of data in the BED file by chromosome/scaffold/contig and position
+along that chromosome/scaffold/contig. Again, we can do this with some bash scripting:
+> cd rotifer_uce
+> cd bed
+> for i in *.bed; do
+    echo $i;
+    /usr/local/bedtools2/bin/bedtools sort -i $i > ${i%.*}.sort.bed;
+done
+
+Merge overlapping or nearly-overlapping intervals:
+> cd rotifer_uce
+> cd bed
+> for i in *.bam.sort.bed; do
+    echo $i;
+    /usr/local/bedtools2/bin/bedtools merge -i $i > ${i%.*}.merge.bed;
+done
+
+To get some idea of the total number of merged, putatively conserved regions in each exemplar
+taxon that are shared with the base genome, we can simply loop over the files and count the
+number of lines in each:
+>for i in *.bam.sort.merge.bed; do
+    wc -l $i;
+done
+
+Remove repetitive intervals:
+>cd bed
+>for i in *.sort.merge.bed;
+do
+ phyluce_probe_strip_masked_loci_from_set \
+ --bed $i \
+ --twobit ../genomes/ppat/ppat.2bit \
+ --output ${i%.*}.strip.bed \
+ --filter-mask 0.25 \
+ --min-length 80
+done;
+
+
+Determining locus presence in multiple genomes Up to this point, we’ve been processing each file on a taxon-by-taxon basis, where each taxon
+had data aligned to the base genome. Now, we need to determine which loci are conserved across taxa. To do that, we first need to prepare a configuration file (named bed-files.conf) "vim bed-files.conf" that gives the paths to each of our *.bam.sort.merge.strip.bed files. That file needs to be in configuration file format, like so:
+
+[beds]
+afissa:afissa-to-ppat-MAPPING.bam.sort.merge.strip.bed
+arga:arga-to-ppat-MAPPING.bam.sort.merge.strip.bed
+asp:asp-to-ppat-MAPPING.bam.sort.merge.strip.bed
+avgs:args-to-ppat-MAPPING.bam.sort.merge.strip.bed
+bcihs:bcihs-to-ppat-MAPPING.bam.sort.merge.strip.bed
+bcin:bcin-to-ppat-MAPPING.bam.sort.merge.strip.bed
+bkij:bkij-to-ppat-MAPPING.bam.sort.merge.strip.bed
+ebra:ebra-to-ppat-MAPPING.bam.sort.merge.strip.bed
+echi:echi-to-ppat-MAPPING.bam.sort.merge.strip.bed
+euki:euki-to-ppat-MAPPING.bam.sort.merge.strip.bed
+hex:hex-to-ppat-MAPPING.bam.sort.merge.strip.bed
+laflo:laflo-to-ppat-MAPPING.bam.sort.merge.strip.bed
+notorw:notorw-to-ppat-MAPPING.bam.sort.merge.strip.bed
+polyart:polyart-to-ppat-MAPPING.bam.sort.merge.strip.bed
+ppat:ppat-to-ppat-MAPPING.bam.sort.merge.strip.bed
+rmcga:rmcga-to-ppat-MAPPING.bam.sort.merge.strip.bed
+rmga:rmga-to-ppat-MAPPING.bam.sort.merge.strip.bed
+ssocau:ssocau-to-ppat-MAPPING.bam.sort.merge.strip.bed
+
+Now, we’re going to run the following program, that creates a record of which alignment intervals are shared among taxa. 
+>phyluce_probe_get_multi_merge_table \
+ --conf bed-files.conf \
+ --base-taxon ppat \
+ --output rotifer_uce-to-ppat.sqlite
+
+The program shows the results of inserting data for each exemplar taxon that we’ve selected. If
+we take a look at the table contents (see The probe.matches.sqlite database for more
+instructions on sqlite databases), we see something like the following:
+>sqlite3 rotifer_uce-to-ppat.sqlite
+.tables
+match_map  matches
+SELECT * FROM ppat LIMIT 10;
+
+Determining shared, conserved, loci:
+>phyluce_probe_query_multi_merge_table \
+--db rotifer_uce-to-ppat.sqlite \
+--base-taxon ppat
+
+Now that we have a general sense of the number of conserved loci in each class of sharing across exemplars, we need to extract those loci that fall within one of these classes. In this case (and as noted in the box, above), we’re going to ouput only those conserved loci that we’ve identified as being shared between the base genome and all exemplars.
+>phyluce_probe_query_multi_merge_table \
+--db rotifer_uce-to-ppat.sqlite \
+--base-taxon ppat \
+--output ppat+14.bed \
+--specific-counts 14
+
+Conserved locus validation:
+Extract FASTA sequence from base genome for temp bait design:
+>phyluce_probe_get_genome_sequences_from_bed \
+--bed ppat+14.bed \
+--twobit ../genomes/ppat/ppat.2bit \
+--buffer-to 160 \
+--output ppat+14.fasta
+
+Design a temporary bait set from the base taxon:
+>phyluce_probe_get_tiled_probes \
+--input ppat+14.fasta \
+--probe-prefix "uce-" \
+--design rotifer_uce-v1 \
+--designer faircloth \
+--tiling-density 3 \
+--two-probes \
+--overlap middle \
+--masking 0.25 \
+--remove-gc \
+--output ppat+14.temp.probes
+
+Remove duplicates from our temporary bait set:
+>phyluce_probe_easy_lastz \
+--target ppat+14.temp.probes \
+--query ppat+14.temp.probes \
+--identity 50 --coverage 50 \
+--output ppat+14.temp.probes-TO-SELF-PROBES.lastz
+
+>phyluce_probe_remove_duplicate_hits_from_probes_using_lastz \
+--fasta ppat+14.temp.probes \
+--lastz ppat+14.temp.probes-TO-SELF-PROBES.lastz \
+--probe-prefix=uce-
+
+Align baits against exemplar genomes:
+>mkdir prb-design1
+
+>mkdir rotifers-genomes-lastz
+
+>phyluce_probe_run_multiple_lastzs_sqlite \
+--probefile ../bed/ppat+14.temp-DUPE-SCREENED.probes \
+--scaffoldlist afissa asp bcihs bcin bkij ebra echi euki hex laflo notorw polyart ppat ssocau dapu \
+--genome-base-path ../genomes \
+--identity 50 \
+--cores 16 \
+--db ppat+14+dapu.sqlite \
+--output rotifers-genomes-lastz
+
+Extract sequence around conserved loci from exemplar genomes
+we need to make a configuration file with all the genome loca ons in it:
+
+[scaffolds]
+dapu:/path/to/rotifer_uce/genomes/dapu/dapu.2bit
+afissa:/path/to/rotifer_uce/genomes/afissa/afissa.2bit
+arga:/path/to/rotifer_uce/genomes/arga/arga.2bit
+asp:/path/to/rotifer_uce/genomes/asp/asp.2bit
+avgs:/path/to/rotifer_uce/genomes/avgs/avgs.2bit
+bcihs:/path/to/rotifer_uce/genomes/bcihs/bcihs.2bit
+bcin:/path/to/rotifer_uce/genomes/bcin/bcin.2bit
+bkij:/path/to/rotifer_uce/genomes/bkij/bkij.2bit
+ebra:/path/to/rotifer_uce/genomes/ebra/ebra.2bit
+echi:/path/to/rotifer_uce/genomes/echi/echi.2bit
+euki:/path/to/rotifer_uce/genomes/euki/euki.2bit
+hex:/path/to/rotifer_uce/genomes/hex/hex.2bit
+laflo:/path/to/rotifer_uce/genomes/laflo/laflo.2bit
+notorw:/path/to/rotifer_uce/genomes/notorw/notorw.2bit
+polyart:/path/to/rotifer_uce/polyart/polyart.2bit
+ppat:/path/to/rotifer_uce/genomes/ppat/ppat.2bit
+rmcga:/path/to/rotifer_uce/genomes/rmcga/rmcga.2bit
+rmga:/path/to/rotifer_uce/genomes/rmga/rmga.2bit
+ssocau:/path/to/rotifer_uce/genomes/ssocau/ssocau.2bit
+
+Using the configuration file, we need to extract the FASTA sequence that we need from each exemplar taxon.
+>phyluce_probe_slice_sequence_from_genomes \
+ --conf probe-files.conf \
+ --lastz rotifers-genomes-lastz \
+ --probes 180 \
+ --name-pattern "ppat+14.temp-DUPE-SCREENED.probes_v_{}.lastz.clean" \
+ --output rotifers-genomes-fasta
+
+
+Find which loci we detect consistently:
+>phyluce_probe_get_multi_fasta_table \
+--fastas rotifers-genomes-fasta \
+--output multifastas.sqlite \
+--base-taxon ppat
+
+we take a look at the table contents in the database:
+>sqlite3 multifastas.sqlite
+SQLite version 3.32.3 2020-06-18 14:00:33
+Enter ".help" for usage hints.
+sqlite> .mode columns
+sqlite> .headers on
+sqlite> .null value .
+Usage: .nullvalue STRING
+sqlite> .tables
+ppat
+sqlite> SELECT * FROM ppat LIMIT 15;
+
+Which shows our detection of conserved loci in each of the exemplar taxa when we search for
+them using the temporary probes that we designed from the base genome. As before, we can
+get some idea of the distribution of hits among exemplar taxa.
+>phyluce_probe_query_multi_fasta_table \
+--db multifastas.sqlite \
+--base-taxon ppat
+
+Again, we’ve got to make a decision here about how conserva ve we want to be regarding baits that hit all/some taxa.
+>phyluce_probe_query_multi_fasta_table \
+--db multifastas.sqlite \
+--base-taxon ppat \
+--output ppat+14-back-to-14.conf \
+--specific-counts 12
+
+
+Final bait set design
+Design a bait set using all exemplar genomes (and the base):
+>phyluce_probe_get_tiled_probe_from_multiple_inputs \
+--fastas rotifers-genomes-fasta \
+--multi-fasta-output ppat+14-back-to-14.conf \
+--probe-prefix "uce-" \
+--designer faircloth \
+--design rotifer_uce-v1 \
+--tiling-density 3 \
+--overlap middle \
+--masking 0.25 \
+--remove-gc \
+--two-probes \
+--output rotifers-v1-master-probe-list.fasta
+
+Remove duplicates from our bait set
+>phyluce_probe_easy_lastz \
+--target rotifers-v1-master-probe-list.fasta \
+--query rotifers-v1-master-probe-list.fasta \
+--identity 50 \
+--coverage 50 \
+--output rotifers-v1-master-probe-list-TO-SELF-PROBES.lastz
+
+Now, screen the alignements and filter our master probe list to remove duplicates:
+>phyluce_probe_remove_duplicate_hits_from_probes_using_lastz \
+--fasta rotifers-v1-master-probe-list.fasta \
+--lastz rotifers-v1-master-probe-list-TO-SELF-PROBES.lastz \
+--probe-prefix=uce-
+
+The master bait list
+Subsetting the master probe list:
+>phyluce_probe_get_subsets_of_tiled_probes \
+--probes rotifers-v1-master-probe-list-DUPE-SCREENED.fasta \
+--taxa afissa asp bcihs bcin bkij ebra echi euki hex laflo notorw polyart ppat ssocau dapu \
+--output rotifers-v1-master-probe-list-DUPE-SCREENED-SUBSET-CLADE_1.fasta
+
+In-silico test of the bait design
+>mkdir prb-design1-test
+>cd prb-design1-test
+
+Align our bait set to the extant genome sequences:
+>phyluce_probe_run_multiple_lastzs_sqlite \
+--db ppat+14+dapu-test.sqlite \
+--output rotifers-genome-lastz \
+--probefile ../probe-design/rotifers-v1-master-probe-list-DUPE-SCREENED.fasta \
+--scaffoldlist afissa asp bcihs bcin bkij ebra echi euki hex laflo notorw polyart ppat ssocau dapu \
+--genome-base-path ../genomes \
+--identity 50 \
+--cores 20
+
+Now, we need to extract fasta data for each of these loci:
+>phyluce_probe_slice_sequence_from_genomes \
+--conf /scratch1/rotifer_uce/prb-design1/rotifers-genomes.conf \
+--lastz rotifers-genomes-lastz \
+--output rotifers-genomes-fasta \
+--flank 400 \
+--name-pattern "rotifers-v1-master-probe-list-DUPE-SCREENED.fasta_v_{}.lastz.clean"
+
+Match contigs to baits:
+>phyluce_assembly_match_contigs_to_probes \
+--contigs rotifers-genomes-fasta \
+--probes /scratch1/rotifer_uce/prb-design1/rotifers-v1-master-probe-list-DUPE-SCREENED.fasta \
+--output in-silico-lastz \
+--min-coverage 67 \
+--log-path log
+
+Get match counts and extract FASTA information:
+>phyluce_assembly_get_match_counts \
+--locus-db in-silico-lastz/probe.matches.sqlite \
+--taxon-list-config taxon-set.conf \
+--taxon-group 'all' \
+--output insilico-incomplete.conf \
+--log-path log \
+--incomplete-matrix
+
+Now, extract the FASTA informa on for each locus into a monolithic FASTA file:
+>phyluce_assembly_get_fastas_from_match_counts \
+--contigs /scratch1/rotifer_uce/prb-design1-test/rotifers-genomes-fasta \
+--locus-db /scratch1/rotifer_uce/prb-design1-test/in-silico-lastz/probe.matches.sqlite \
+--match-count-output insilico-incomplete.conf \
+--output insilico-incomplete.fasta \
+--incomplete-matrix insilico-incomplete.incomplete \
+--log-path log
+
+Align the conserved locus data:
+>phyluce_align_seqcap_align \
+--fasta insilico-incomplete.fasta \
+--output mafft \
+--taxa 15 \
+--incomplete-matrix \
+--cores 16 \
+--no-trim \
+--output-format fasta \
+--log-path log
+
+Trim the conserved locus alignments:
+>phyluce_align_get_gblocks_trimmed_alignments_from_untrimmed \
+--alignments mafft \
+--output mafft-gblocks \
+--b1 0.5 \
+--b4 8 \
+--cores 20 \
+--log log
+
+Remove the locus names from each alignment:
+>phyluce_align_remove_locus_name_from_nexus_lines \
+--alignments mafft-gblocks \
+--output mafft-gblocks-clean \
+--cores 20 \
+--log-path log
+
+Get stats across the aligned loci:
+>phyluce_align_get_align_summary_data \
+--alignments mafft-gblocks-clean \
+--cores 16 \
+--log-path log
+
+Generate an incomplete matrix:
+>phyluce_align_get_only_loci_with_min_taxa \
+ --alignments mafft-gblocks-clean \
+ --taxa 15 \
+ --output mafft-gblocks-70p \
+ --percent 0.75 \
+ --cores 16 \
+ --log log
+
+Prep raxml files, run raxml ML searches, and reconcile best tree w/bootreps:
+Setup the PHYLIP-forma ed files for raxml:
+>phyluce_align_format_nexus_files_for_raxml \
+--alignments mafft-gblocks-70p \
+--output mafft-gblocks-70p-raxml \
+
+or 
+
+>phyluce_align_concatenate_alignments \
+--alignments mafft-gblocks-70p \
+--output mafft-gblocks-70p-raxml \
+--log-path log --phylip
+
+Now, run raxml against this phylip file:
+/usr/local/raxml-ng/raxml-ng --msa /scratch1/rotifer_uce/prb-design1-test/mafft-gblocks-70p-raxml/mafft-gblocks-70p-raxml.phylip --model GTR+G --bootstrap 20 --bs-t 772374015 --threads 16 --tree pars{10} --prefix BEST
+/usr/local/raxml-ng/raxml-ng --msa /scratch1/rotifer_uce/prb-design1-test/mafft-gblocks-70p-raxml/mafft-gblocks-70p-raxml.phylip --model GTR+G --bootstrap 20 --bs-t 772374015 --bs-trees 444353738 --threads 16 --tree pars{10} --prefix bootrep
+
+Now, reconcile the best ML tree w/ the bootreps:
+>/usr/local/raxml-ng/raxml-ng \
+  --bootstrap \
+  --bs-t 772374015 \
+  --bs-trees 444353738 \
+  --support \
+  --tree RAxML_bestTree.BEST \
+  --prefix FINAL \
+  --outgroup dapu
+
+or use Figtre to generate phylogenetic tree with the raxml output file.
+
+
+
+
+
+
